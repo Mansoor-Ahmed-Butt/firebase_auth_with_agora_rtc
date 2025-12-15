@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "155464810788",
+    "project_id": "sign-in-with-agora",
+    "storage_bucket": "sign-in-with-agora.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155464810788:android:01a801fe66e01d710a33b1",
+        "android_client_info": {
+          "package_name": "com.example.sign_in_google_with_agora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo2l5uqejySWCnlUtJk9CUOykBsocIQaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
