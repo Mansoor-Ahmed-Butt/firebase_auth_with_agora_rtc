@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:sign_in_google_with_agora/modules/auth/controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -8,51 +9,110 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Home / Agora')),
+
+      // 👇 Bottom controls
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Obx(() {
+              final muted = controller.muted.value;
+              return IconButton(
+                onPressed: controller.toggleMute,
+                icon: Icon(muted ? Icons.mic_off : Icons.mic, color: Colors.white, size: 28),
+              );
+            }),
+            const SizedBox(width: 24),
+            Obx(() {
+              final videoOn = controller.videoEnabled.value;
+              return IconButton(
+                onPressed: controller.toggleVideo,
+                icon: Icon(videoOn ? Icons.videocam : Icons.videocam_off, color: Colors.white, size: 28),
+              );
+            }),
+            const SizedBox(width: 24),
+            IconButton(
+              onPressed: controller.switchCamera,
+              icon: const Icon(Icons.cameraswitch, color: Colors.white, size: 28),
+            ),
+          ],
+        ),
+      ),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.blue.shade400, Colors.purple.shade400]),
         ),
         child: SafeArea(
           child: Center(
-            child: SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo/Icon
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
-                    ),
-                    child: const Icon(Icons.lock_outline, size: 60, color: Colors.blue),
+                  // join / leave row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller.channelControl,
+                          decoration: const InputDecoration(hintText: 'Channel name', filled: true, fillColor: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await controller.joinChannel(controller.channelControl.text.trim());
+                        },
+                        child: const Text('Join'),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(onPressed: controller.leaveChannel, child: const Text('Leave')),
+                    ],
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 12),
 
-                  // Welcome text
-                  const Text(
-                    'Welcome Back',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  const SizedBox(height: 8),
-                  Text('To the Home Screen', style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.9))),
-                  const SizedBox(height: 40),
+                  // video area
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Obx(() {
+                            final r = controller.remote.value;
+                            if (r != null) {
+                              return AgoraVideoView(
+                                controller: VideoViewController.remote(
+                                  rtcEngine: controller.engine,
+                                  canvas: VideoCanvas(uid: r),
+                                  connection: RtcConnection(channelId: controller.channelControl.text.trim()),
+                                ),
+                              );
+                            }
+                            return const Text('Waiting for remote user to join', style: TextStyle(color: Colors.white));
+                          }),
+                        ),
 
-                  // Login form
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
-                    ),
-                    child: Column(
-                      children: [Text("This is the Home Screen", style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.9)))],
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          width: 120,
+                          height: 160,
+                          child: Container(
+                            color: Colors.black45,
+                            child: Obx(() {
+                              return controller.localJoined.value
+                                  ? AgoraVideoView(
+                                      controller: VideoViewController(rtcEngine: controller.engine, canvas: const VideoCanvas(uid: 0)),
+                                    )
+                                  : const Center(child: CircularProgressIndicator());
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 24),
                 ],
               ),
             ),

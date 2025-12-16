@@ -36,39 +36,34 @@ class LoginController extends GetxController {
       try {
         final email = emailController.text.trim();
         final password = passwordController.text;
-
-        // // Check whether the email is registered to provide clearer errors and avoid generic internal errors
-        // try {
-        //   final methods = await AuthService.instance.fetchSignInMethodsForEmail(email);
-        //   if (methods.isEmpty) {
-        //     isLoading.value = false;
-        //     NotificationService.instance.showError('No account found for that email.');
-        //     return;
-        //   }
-        // } catch (e) {
-        //   // If fetchSignInMethodsForEmail fails unexpectedly, log and continue to attempt sign-in
-        //   // ignore: avoid_print
-        //   print('fetchSignInMethodsForEmail failed: $e');
-        // }
-
-        final credential = await AuthService.instance.signInWithEmail(email: email, password: password);
-
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+        // ignore: avoid_print
+        print("User logged in: ${userCredential.user?.uid}");
         isLoading.value = false;
         NotificationService.instance.showSuccess('Login successful!');
         context.go('/home');
       } on FirebaseAuthException catch (e) {
         isLoading.value = false;
         // Show code + message to help diagnose "internal error" cases
-        final friendly = '${e.code}: ${e.message ?? 'Authentication error'}';
+        final code = e.code;
+        final friendly = '$code: ${e.message ?? 'Authentication error'}';
         // ignore: avoid_print
         print('LoginController FirebaseAuthException -> $friendly');
-        if (e.code == 'user-not-found') {
-          NotificationService.instance.showError('user-not-found: User not found. Please sign up first.');
-        } else if (e.code == 'wrong-password') {
-          NotificationService.instance.showError('wrong-password: Incorrect password.');
+
+        String message;
+        if (code == 'user-not-found') {
+          message = 'This email does not have an account. Please sign up.';
+        } else if (code == 'wrong-password') {
+          message = 'Enter a valid password.';
+        } else if (code == 'invalid-email') {
+          message = 'Enter a valid email address.';
+        } else if (code == 'invalid-credential' || code == 'invalid-credentials') {
+          message = 'Incorrect email or password. Please check your credentials.';
         } else {
-          NotificationService.instance.showError(friendly);
+          message = friendly;
         }
+
+        NotificationService.instance.showError(message);
       } catch (e) {
         isLoading.value = false;
         // unexpected errors

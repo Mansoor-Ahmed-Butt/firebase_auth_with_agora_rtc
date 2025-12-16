@@ -112,7 +112,11 @@ class LoginView extends GetView<LoginController> {
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: controller.isLoading.value ? null : () => controller.login(context),
+                                onPressed: controller.isLoading.value
+                                    ? null
+                                    : () {
+                                        controller.login(context);
+                                      },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
