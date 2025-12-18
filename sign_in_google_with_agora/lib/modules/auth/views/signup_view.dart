@@ -9,6 +9,8 @@ class SignupView extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -52,7 +54,7 @@ class SignupView extends GetView<SignupController> {
                         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
                       ),
                       child: Form(
-                        key: controller.formKey,
+                        key: formKey,
                         child: Column(
                           children: [
                             // CustomAppTextField(
@@ -162,7 +164,13 @@ class SignupView extends GetView<SignupController> {
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: controller.isLoading.value ? null : () => controller.signup(context),
+                                onPressed: controller.isLoading.value
+                                    ? null
+                                    : () {
+                                        if (formKey.currentState!.validate()) {
+                                          controller.signup(context);
+                                        }
+                                      },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.purple,
                                   foregroundColor: Colors.white,

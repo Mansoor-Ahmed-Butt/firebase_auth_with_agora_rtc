@@ -2,7 +2,8 @@
     <application
         android:label="sign_in_google_with_agora"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">  <!--implemented for Android 13 back gesture handling-->
         <activity
             android:name=".MainActivity"
             android:exported="true"

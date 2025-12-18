@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sign_in_google_with_agora/modules/auth/controllers/home_controller.dart';
+import 'package:sign_in_google_with_agora/modules/auth/services/auth_service.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -9,7 +11,28 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home / Agora')),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Home / Agora'),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                try {
+                  await AuthService.instance.signOutWithGoogle();
+                  await AuthService.instance.logoutAccount();
+                  if (!context.mounted) return;
+                  context.go('/login');
+                } catch (e) {
+                  // ignore: avoid_print
+                  print('Logout error: $e');
+                }
+              },
+            ),
+          ],
+        ),
+      ),
 
       // 👇 Bottom controls
       bottomNavigationBar: Container(

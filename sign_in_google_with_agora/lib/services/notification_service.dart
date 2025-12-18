@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_snackbar.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
+/// Simple notification service that shows `AwesomeSnackbarContent` via the
+/// app `navigatorKey`. Keep this file focused and robust: if no mounted
+/// navigator context is available we no-op rather than throwing.
+enum SnackType { success, error, info }
 
 class NotificationService {
-  NotificationService._internal();
-
-  static final NotificationService instance = NotificationService._internal();
+  NotificationService._();
+  static final NotificationService instance = NotificationService._();
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  OverlayState? get _overlay => navigatorKey.currentState?.overlay;
+  BuildContext? get _context => navigatorKey.currentContext;
 
   void show({required String message, SnackType type = SnackType.info, Duration duration = const Duration(seconds: 3)}) {
-    final overlay = _overlay;
-    if (overlay == null) {
-      // Fallback: try ScaffoldMessenger if overlay not available
-      try {
-        navigatorKey.currentContext != null
-            ? ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(SnackBar(content: Text(message)))
-            : null;
-      } catch (_) {}
-      return;
-    }
+    final ctx = _context;
+    if (ctx == null) return; // no mounted navigator; nothing to do
 
-    late OverlayEntry entry;
-    entry = OverlayEntry(
-      builder: (ctx) => Positioned(
-        top: 16,
-        left: 0,
-        right: 0,
-        child: Center(
-          child: CustomSnackBar(
-            message: message,
-            type: type,
-            duration: duration,
-            onDismiss: () {
-              entry.remove();
-            },
-          ),
-        ),
-      ),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final contentType = type == SnackType.success
+          ? ContentType.success
+          : type == SnackType.error
+          ? ContentType.failure
+          : ContentType.help;
 
-    overlay.insert(entry);
+      final title = type == SnackType.success
+          ? 'Success'
+          : type == SnackType.error
+          ? 'Error'
+          : 'Info';
+
+      final snackBar = SnackBar(
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        duration: duration,
+        content: AwesomeSnackbarContent(title: title, message: message, contentType: contentType),
+      );
+
+      final messenger = ScaffoldMessenger.maybeOf(ctx);
+      messenger?.hideCurrentSnackBar();
+      messenger?.showSnackBar(snackBar);
+    });
   }
 
   void showSuccess(String message) => show(message: message, type: SnackType.success);

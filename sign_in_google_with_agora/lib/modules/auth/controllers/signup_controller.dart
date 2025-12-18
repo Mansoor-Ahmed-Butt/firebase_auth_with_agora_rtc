@@ -6,7 +6,6 @@ import '../services/auth_service.dart';
 import '../../../services/notification_service.dart';
 
 class SignupController extends GetxController {
-  final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,36 +30,34 @@ class SignupController extends GetxController {
       return;
     }
 
-    if (formKey.currentState!.validate()) {
-      if (passwordController.text != confirmPasswordController.text) {
-        NotificationService.instance.showError('Passwords do not match');
-        return;
+    if (passwordController.text != confirmPasswordController.text) {
+      NotificationService.instance.showError('Passwords do not match');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final name = nameController.text.trim();
+      final email = emailController.text.trim();
+      final password = passwordController.text;
+
+      final userCred = await AuthService.instance.signUpWithEmail(name: name, email: email, password: password);
+
+      isLoading.value = false;
+      NotificationService.instance.showSuccess('Account created successfully!');
+      context.go('/login');
+    } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
+      if (e.code == 'email-already-in-use') {
+        NotificationService.instance.showError('Email already in use. Please login.');
+      } else if (e.code == 'weak-password') {
+        NotificationService.instance.showError('Password is too weak.');
+      } else {
+        NotificationService.instance.showError(e.message ?? 'Signup error');
       }
-
-      isLoading.value = true;
-      try {
-        final name = nameController.text.trim();
-        final email = emailController.text.trim();
-        final password = passwordController.text;
-
-        final userCred = await AuthService.instance.signUpWithEmail(name: name, email: email, password: password);
-
-        isLoading.value = false;
-        NotificationService.instance.showSuccess('Account created successfully!');
-        context.go('/login');
-      } on FirebaseAuthException catch (e) {
-        isLoading.value = false;
-        if (e.code == 'email-already-in-use') {
-          NotificationService.instance.showError('Email already in use. Please login.');
-        } else if (e.code == 'weak-password') {
-          NotificationService.instance.showError('Password is too weak.');
-        } else {
-          NotificationService.instance.showError(e.message ?? 'Signup error');
-        }
-      } catch (e) {
-        isLoading.value = false;
-        NotificationService.instance.showError('Signup failed: $e');
-      }
+    } catch (e) {
+      isLoading.value = false;
+      NotificationService.instance.showError('Signup failed: $e');
     }
   }
 }

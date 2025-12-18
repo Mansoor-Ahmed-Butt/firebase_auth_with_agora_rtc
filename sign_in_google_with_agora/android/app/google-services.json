@@ -12,7 +12,20 @@
           "package_name": "com.example.sign_in_google_with_agora"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "155464810788-kuguu8vb5epeo1nutf5d2aofrfgd78n4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sign_in_google_with_agora",
+            "certificate_hash": "e62182c6dff6e65c330540a5ad96fdbe98a0e762"
+          }
+        },
+        {
+          "client_id": "155464810788-e3f4eiumk58tgi16h6l6trabhvcusges.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBo2l5uqejySWCnlUtJk9CUOykBsocIQaE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155464810788-e3f4eiumk58tgi16h6l6trabhvcusges.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "155464810788-36celvtg8tdidehnfd6ltjkj6akhh65p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.signInGoogleWithAgora"
+              }
+            }
+          ]
         }
       }
     }

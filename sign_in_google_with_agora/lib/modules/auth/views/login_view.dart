@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sign_in_google_with_agora/modules/auth/services/auth_service.dart';
 import 'package:sign_in_google_with_agora/widgets/common/custom_text_field.dart';
 import '../controllers/login_controller.dart';
 
@@ -9,6 +10,7 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -51,7 +53,7 @@ class LoginView extends GetView<LoginController> {
                       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
                     ),
                     child: Form(
-                      key: controller.formKey,
+                      key: formKey,
                       child: Column(
                         children: [
                           CustomAppTextField(
@@ -104,7 +106,12 @@ class LoginView extends GetView<LoginController> {
                           const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: TextButton(onPressed: () {}, child: const Text('Forgot Password?')),
+                            child: TextButton(
+                              onPressed: () {
+                                context.go('/forgot-password');
+                              },
+                              child: const Text('Forgot Password?'),
+                            ),
                           ),
                           const SizedBox(height: 24),
                           Obx(
@@ -115,7 +122,9 @@ class LoginView extends GetView<LoginController> {
                                 onPressed: controller.isLoading.value
                                     ? null
                                     : () {
-                                        controller.login(context);
+                                        if (formKey.currentState!.validate()) {
+                                          controller.login(context);
+                                        }
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
@@ -131,6 +140,23 @@ class LoginView extends GetView<LoginController> {
                                       )
                                     : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                               ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                await AuthService.instance.signInWithGoogle();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                elevation: 2,
+                              ),
+                              child: const Text('Sign in with Google', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
