@@ -37,7 +37,7 @@ class HomeScreen extends GetView<HomeController> {
       // 👇 Bottom controls
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+        decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

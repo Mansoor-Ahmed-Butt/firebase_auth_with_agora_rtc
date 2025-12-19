@@ -25,14 +25,14 @@ class AppRouter {
         path: '/login',
         builder: (context, state) {
           AuthBinding().dependencies();
-          return const LoginView();
+          return LoginView();
         },
       ),
       GoRoute(
         path: '/signup',
         builder: (context, state) {
           AuthBinding().dependencies();
-          return const SignupView();
+          return SignupView();
         },
       ),
       GoRoute(
