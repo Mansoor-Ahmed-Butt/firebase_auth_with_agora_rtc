@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sign_in_google_with_agora/services/notification_service.dart';
 
 class AuthService {
   AuthService._();
@@ -45,7 +47,7 @@ class AuthService {
     return await _auth.signOut();
   }
 
-  Future<Null> signInWithGoogle() async {
+  Future<UserCredential?> signInWithGoogle() async {
     try {
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -60,7 +62,7 @@ class AuthService {
       // Create a new credential for Firebase
       final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-      // Sign in to Firebase with the credential
+      // Sign in to Firebase with the credential and return the result
       final userCredential = await _auth.signInWithCredential(credential);
 
       // Save user info to Firestore
@@ -76,9 +78,7 @@ class AuthService {
       //   }, SetOptions(merge: true));
       // }
 
-      // return userCredential;
-
-      await _auth.signInWithCredential(credential);
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}, ${e.message}');
       rethrow;
@@ -89,7 +89,41 @@ class AuthService {
   }
 
   Future<void> signOutWithGoogle() async {
-    await GoogleSignIn().signOut();
+    try {
+      // Sign out from Firebase first, then disconnect GoogleSignIn to clear any cached account
+      await _auth.signOut();
+      final googleSignIn = GoogleSignIn();
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.disconnect();
+      }
+      await googleSignIn.signOut();
+    } catch (e) {
+      debugPrint('Error during Google sign out: $e');
+    }
+  }
+
+  Future<void> verifyPhoneNumbertoLogIn(BuildContext context, String phone) async {
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phone,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          debugPrint('Phone number automatically verified and user signed in: ${credential.smsCode}  ${credential.verificationId}');
+          _auth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          NotificationService.instance.showError('Verification failed:=============================>1 ${e.code}');
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          context.go('/verify-otp', extra: {'verificationId': verificationId, 'phone': phone});
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } on FirebaseAuthException catch (e) {
+      NotificationService.instance.showError('Error: ${e.code}');
+    } catch (e) {
+      NotificationService.instance.showError('Error: $e');
+    }
   }
 
   // Future<List<String>> fetchSignInMethodsForEmail(String email) async {

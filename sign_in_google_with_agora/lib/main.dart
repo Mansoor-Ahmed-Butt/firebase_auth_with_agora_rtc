@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sign_in_google_with_agora/firebase_options.dart';
 import 'routes/app_router.dart';
 
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routeInformationParser: AppRouter.router.routeInformationParser,
       routeInformationProvider: AppRouter.router.routeInformationProvider,
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
+      builder: EasyLoading.init(),
     );
   }
 }

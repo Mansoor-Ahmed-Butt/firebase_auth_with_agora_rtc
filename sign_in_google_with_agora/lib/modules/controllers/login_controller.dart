@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../services/notification_service.dart';
+import '../../services/notification_service.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -30,6 +31,7 @@ class LoginController extends GetxController {
 
   void login(BuildContext context) async {
     isLoading.value = true;
+    EasyLoading.show(status: 'Signing in...');
     try {
       final email = emailController.text.trim();
       final password = passwordController.text;
@@ -37,10 +39,13 @@ class LoginController extends GetxController {
       // ignore: avoid_print
       print("User logged in: ${userCredential.user?.uid}");
       isLoading.value = false;
+      EasyLoading.dismiss();
+      if (!context.mounted) return;
       NotificationService.instance.showSuccess('Login successful!');
       context.go('/home');
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
+      EasyLoading.dismiss();
       // Show code + message to help diagnose "internal error" cases
       final code = e.code;
       final friendly = '$code: ${e.message ?? 'Authentication error'}';
@@ -63,6 +68,7 @@ class LoginController extends GetxController {
       NotificationService.instance.showError(message);
     } catch (e) {
       isLoading.value = false;
+      EasyLoading.dismiss();
       // unexpected errors
       // ignore: avoid_print
       print('LoginController unexpected error: $e');

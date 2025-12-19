@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sign_in_google_with_agora/modules/auth/services/auth_service.dart';
+import 'package:sign_in_google_with_agora/auth/firebase_auth/firebase_auth.dart';
 import 'package:sign_in_google_with_agora/services/notification_service.dart';
 
 class ForgotPasswordController extends GetxController {

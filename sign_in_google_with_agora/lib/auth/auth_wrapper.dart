@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'views/login_view.dart';
-import 'views/home_screen.dart';
-import 'bindings/auth_binding.dart';
+import '../modules/views/login_view.dart';
+import '../modules/views/home_screen.dart';
+import '../modules/bindings/auth_binding.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -23,7 +23,7 @@ class AuthWrapper extends StatelessWidget {
           return const HomeScreen();
         }
 
-        return const LoginView();
+        return LoginView();
       },
     );
   }

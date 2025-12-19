@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sign_in_google_with_agora/modules/auth/services/auth_service.dart';
+import 'package:sign_in_google_with_agora/auth/firebase_auth/firebase_auth.dart';
+import 'package:sign_in_google_with_agora/services/notification_service.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sign_in_google_with_agora/widgets/common/custom_text_field.dart';
 import '../controllers/login_controller.dart';
 
@@ -148,7 +150,17 @@ class LoginView extends GetView<LoginController> {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () async {
-                                await AuthService.instance.signInWithGoogle();
+                                EasyLoading.show(status: 'Signing in with Google...');
+                                try {
+                                  await AuthService.instance.signInWithGoogle();
+                                } catch (e) {
+                                  // show error
+                                  // ignore: avoid_print
+                                  print('Google sign-in error: $e');
+                                  NotificationService.instance.showError('Google sign-in failed');
+                                } finally {
+                                  EasyLoading.dismiss();
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blue,
@@ -157,6 +169,23 @@ class LoginView extends GetView<LoginController> {
                                 elevation: 2,
                               ),
                               child: const Text('Sign in with Google', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                context.push('/phone');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                elevation: 2,
+                              ),
+                              child: const Text('Sign in Phone Number', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],

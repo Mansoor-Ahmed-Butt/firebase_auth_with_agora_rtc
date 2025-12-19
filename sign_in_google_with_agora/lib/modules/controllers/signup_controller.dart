@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
-import '../../../services/notification_service.dart';
+import '../../auth/firebase_auth/firebase_auth.dart';
+import '../../services/notification_service.dart';
 
 class SignupController extends GetxController {
   final nameController = TextEditingController();
@@ -36,6 +37,7 @@ class SignupController extends GetxController {
     }
 
     isLoading.value = true;
+    EasyLoading.show(status: 'Creating account...');
     try {
       final name = nameController.text.trim();
       final email = emailController.text.trim();
@@ -44,10 +46,12 @@ class SignupController extends GetxController {
       final userCred = await AuthService.instance.signUpWithEmail(name: name, email: email, password: password);
 
       isLoading.value = false;
+      EasyLoading.dismiss();
       NotificationService.instance.showSuccess('Account created successfully!');
       context.go('/login');
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
+      EasyLoading.dismiss();
       if (e.code == 'email-already-in-use') {
         NotificationService.instance.showError('Email already in use. Please login.');
       } else if (e.code == 'weak-password') {
@@ -57,6 +61,7 @@ class SignupController extends GetxController {
       }
     } catch (e) {
       isLoading.value = false;
+      EasyLoading.dismiss();
       NotificationService.instance.showError('Signup failed: $e');
     }
   }
