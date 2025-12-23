@@ -3,11 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sign_in_google_with_agora/firebase_options.dart';
+import 'notifications/notifications_service.dart';
 import 'routes/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize notifications (local + FCM handlers)
+  await NotificationsService.initialize();
+
+  // For debugging: print FCM token
+  try {
+    final token = await NotificationsService.getToken();
+    if (token != null) {
+      // ignore: avoid_print
+      print('NFCM token: $token');
+    }
+  } catch (_) {}
+
   runApp(const MyApp());
 }
 
