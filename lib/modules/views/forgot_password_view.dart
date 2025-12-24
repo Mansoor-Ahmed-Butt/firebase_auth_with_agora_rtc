@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sign_in_google_with_agora/services/notification_service.dart';
-import 'package:sign_in_google_with_agora/widgets/common/custom_text_field.dart';
 import '../controllers/forgot_password_controller.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:sign_in_google_with_agora/routes/app_router.dart';
 
 class ForgotPasswordView extends GetView<ForgotPasswordController> {
   ForgotPasswordView({super.key});

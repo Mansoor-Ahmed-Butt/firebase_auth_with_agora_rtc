@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sign_in_google_with_agora/modules/controllers/home_controller.dart';
+import 'package:sign_in_google_with_agora/modules/controllers/video_call_controller.dart';
 import 'package:sign_in_google_with_agora/auth/firebase_auth/firebase_auth.dart';
 
-class HomeScreen extends GetView<HomeController> {
-  const HomeScreen({super.key});
+class VideoCallScreen extends GetView<VideoCallController> {
+  const VideoCallScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

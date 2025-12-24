@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sign_in_google_with_agora/utils/constants.dart';
 
-class HomeController extends GetxController {
+class VideoCallController extends GetxController {
   final channelControl = TextEditingController();
   RxBool validator = false.obs;
   // choose role: broadcaster or audience

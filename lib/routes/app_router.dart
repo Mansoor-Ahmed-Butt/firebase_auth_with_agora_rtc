@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
-import '../services/notification_service.dart';
 import 'package:sign_in_google_with_agora/modules/views/home_screen.dart';
+import '../services/notification_service.dart';
+import 'package:sign_in_google_with_agora/modules/views/video_call_screen.dart';
 
 import '../modules/bindings/auth_binding.dart';
 import '../modules/views/login_view.dart';
@@ -43,10 +44,17 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/video_call_screen',
+        builder: (context, state) {
+          AuthBinding().dependencies();
+          return const VideoCallScreen();
+        },
+      ),
+      GoRoute(
         path: '/home',
         builder: (context, state) {
           AuthBinding().dependencies();
-          return const HomeScreen();
+          return HomeScreen();
         },
       ),
       GoRoute(
