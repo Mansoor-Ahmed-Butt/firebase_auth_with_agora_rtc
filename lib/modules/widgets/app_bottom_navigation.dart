@@ -50,7 +50,7 @@ class AppBottomNavigationBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'tickets'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'microphone'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
         ],
         selectedLabelStyle: selectedLabelStyle,

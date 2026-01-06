@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:sign_in_google_with_agora/modules/views/google_map.dart';
 import 'package:sign_in_google_with_agora/modules/views/home_screen.dart';
 import '../services/notification_service.dart';
 import 'package:sign_in_google_with_agora/modules/views/video_call_screen.dart';
@@ -34,6 +35,13 @@ class AppRouter {
         builder: (context, state) {
           AuthBinding().dependencies();
           return SignupView();
+        },
+      ),
+      GoRoute(
+        path: '/map',
+        builder: (context, state) {
+          AuthBinding().dependencies();
+          return MapView();
         },
       ),
       GoRoute(

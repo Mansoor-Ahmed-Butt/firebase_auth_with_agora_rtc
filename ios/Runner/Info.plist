@@ -12,6 +12,8 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby places on the map.</string>
 	<key>CFBundleName</key>
 	<string>sign_in_google_with_agora</string>
 	<key>CFBundlePackageType</key>

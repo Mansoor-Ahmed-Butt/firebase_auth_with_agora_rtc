@@ -1,9 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:label="sign_in_google_with_agora"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">  <!--implemented for Android 13 back gesture handling-->
+         <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCe_Bfi-LjV-xKMQDEnMLkgbFoewS31_-s"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

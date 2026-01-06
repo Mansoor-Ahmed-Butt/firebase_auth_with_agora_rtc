@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sign_in_google_with_agora/modules/controllers/google_map_controller.dart';
 import 'package:sign_in_google_with_agora/modules/controllers/home_controller.dart';
 import 'package:sign_in_google_with_agora/modules/controllers/video_call_controller.dart';
 
@@ -18,5 +19,6 @@ class AuthBinding extends Bindings {
     Get.lazyPut<PhoneAuthController>(() => PhoneAuthController());
     Get.lazyPut<VerifyOtpController>(() => VerifyOtpController());
     Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<MapController>(() => MapController());
   }
 }

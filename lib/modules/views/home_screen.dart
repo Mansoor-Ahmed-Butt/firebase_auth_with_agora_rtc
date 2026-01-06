@@ -5,6 +5,7 @@ import 'package:sign_in_google_with_agora/auth/firebase_auth/firebase_auth.dart'
 import 'package:sign_in_google_with_agora/modules/controllers/home_controller.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:flutter/services.dart';
+import 'package:sign_in_google_with_agora/modules/views/google_map.dart';
 import 'package:sign_in_google_with_agora/modules/widgets/app_bottom_navigation.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -21,9 +22,6 @@ class HomeScreen extends GetView<HomeController> {
 
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Colors.blueGrey;
-
-  final Gradient selectedGradient = const LinearGradient(colors: [Colors.red, Colors.amber]);
-  final Gradient unselectedGradient = const LinearGradient(colors: [Colors.red, Colors.blueGrey]);
 
   static const List<Color> containerColors = [Color(0xFFFDE1D7), Color(0xFFE4EDF5), Color(0xFFE7EEED), Color(0xFFF4E4CE)];
   final Color? containerColor = containerColors[0];
@@ -64,27 +62,30 @@ class HomeScreen extends GetView<HomeController> {
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: AnimatedContainer(
-        color: containerColor ?? containerColors[0],
-        duration: const Duration(milliseconds: 400),
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  FlutterLogo(size: 200),
-                  SizedBox(height: 24),
-                  Text('This is our beloved SnakeBar.', style: TextStyle(fontSize: 24)),
-                  SizedBox(height: 8),
-                  Text('Swipe right to see different styles', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      body: Obx(() {
+        final index = controller.selectedItemPosition.value;
+
+        Widget content;
+        switch (index) {
+          // Home tab (index 2 in AppBottomNavigationBar)
+          case 2:
+            content = const _HomeTab();
+            break;
+          // Microphone tab (index 3 in AppBottomNavigationBar)
+          case 3:
+            content = const MapView(); //const _MicTab();
+            break;
+          // Any other tab -> simple placeholder for now
+          default:
+            content = Center(child: Text('Tab $index screen', style: const TextStyle(fontSize: 20)));
+        }
+
+        return AnimatedContainer(
+          color: containerColor ?? containerColors[0],
+          duration: const Duration(milliseconds: 400),
+          child: SafeArea(child: content),
+        );
+      }),
       bottomNavigationBar: AppBottomNavigationBar(
         controller: controller,
         behaviour: snakeBarStyle,
@@ -97,6 +98,52 @@ class HomeScreen extends GetView<HomeController> {
         showUnselectedLabels: showUnselectedLabels,
         selectedLabelStyle: const TextStyle(fontSize: 14),
         unselectedLabelStyle: const TextStyle(fontSize: 10),
+      ),
+    );
+  }
+}
+
+class _HomeTab extends StatelessWidget {
+  const _HomeTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            FlutterLogo(size: 200),
+            SizedBox(height: 24),
+            Text('Home tab content', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 8),
+            Text('Customize this section for your home screen.', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MicTab extends StatelessWidget {
+  const _MicTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.mic, size: 120),
+            SizedBox(height: 24),
+            Text('Microphone tab content', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 8),
+            Text('Here you can show your mic / call UI.', style: TextStyle(fontSize: 16)),
+          ],
+        ),
       ),
     );
   }
