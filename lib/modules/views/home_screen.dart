@@ -23,7 +23,7 @@ class HomeScreen extends GetView<HomeController> {
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Colors.blueGrey;
 
-  static const List<Color> containerColors = [Color(0xFFFDE1D7), Color(0xFFE4EDF5), Color(0xFFE7EEED), Color(0xFFF4E4CE)];
+  static const List<Color> containerColors = [Colors.greenAccent, Colors.grey, Colors.lightBlueAccent, Colors.tealAccent];
   final Color? containerColor = containerColors[0];
 
   @override
@@ -34,10 +34,10 @@ class HomeScreen extends GetView<HomeController> {
       extendBody: true,
       appBar: AppBar(
         centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back, color: Colors.black),
+        //   onPressed: () {},
+        // ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -67,15 +67,21 @@ class HomeScreen extends GetView<HomeController> {
 
         Widget content;
         switch (index) {
-          // Home tab (index 2 in AppBottomNavigationBar)
+          case 0:
+            content = Center(child: Text('Notification Screen', style: const TextStyle(fontSize: 20)));
+            break;
+          case 1:
+            content = Center(child: Text('Calender Screen', style: const TextStyle(fontSize: 20)));
+            break;
+
           case 2:
             content = const _HomeTab();
             break;
-          // Microphone tab (index 3 in AppBottomNavigationBar)
+
           case 3:
-            content = const MapView(); //const _MicTab();
+            content = const MapView();
             break;
-          // Any other tab -> simple placeholder for now
+
           default:
             content = Center(child: Text('Tab $index screen', style: const TextStyle(fontSize: 20)));
         }

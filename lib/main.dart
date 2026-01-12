@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp.router(
-      title: 'Sign In Demo',
+      title: 'Sign In With Fire base & Agora',
       debugShowCheckedModeBanner: false,
       routerDelegate: AppRouter.router.routerDelegate,
       routeInformationParser: AppRouter.router.routeInformationParser,

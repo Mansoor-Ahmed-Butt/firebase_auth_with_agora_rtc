@@ -53,17 +53,6 @@ class MapView extends GetView<MapController> {
                           await controller.moveToSearchedLocation(latLng);
                         },
 
-                        // onChanged: (value) async {
-                        //   if (value.isNotEmpty) {
-                        //     await locationFromAddress(value).then((locations) {
-                        //       if (locations.isNotEmpty) {
-                        //         final location = locations.first;
-                        //         final latLng = LatLng(location.latitude, location.longitude);
-                        //         controller.mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15), duration: const Duration(seconds: 2));
-                        //       }
-                        //     });
-                        //   }
-                        // },
                         fillColor: Colors.grey.shade200,
                         controller: controller.searchLocationController,
                         hint: 'Address or lat,lng',
@@ -85,15 +74,6 @@ class MapView extends GetView<MapController> {
                 ),
         ),
       ),
-
-      // Floating Button
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Colors.deepPurple,
-      //   onPressed: () {
-      //     //controller.moveToLocation(const LatLng(31.5300, 74.3500));
-      //   },
-      //   child: const Icon(Icons.location_searching, color: Colors.white),
-      // ),
     );
   }
 }

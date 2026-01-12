@@ -7,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">  <!--implemented for Android 13 back gesture handling-->
          <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCe_Bfi-LjV-xKMQDEnMLkgbFoewS31_-s"/>
+               android:value="AIzaSyBDxmM_2cn3f7SsyUDkoq8S9z11DeOTcxU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
