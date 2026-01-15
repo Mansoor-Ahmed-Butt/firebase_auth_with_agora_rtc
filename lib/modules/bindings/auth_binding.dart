@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:sign_in_google_with_agora/modules/controllers/google_map_controller.dart';
 import 'package:sign_in_google_with_agora/modules/controllers/home_controller.dart';
 import 'package:sign_in_google_with_agora/modules/controllers/video_call_controller.dart';
+import 'package:sign_in_google_with_agora/modules/views/bottom_navigation_screens/chat_screen/chat_screen_controller.dart';
 
 import '../controllers/login_controller.dart';
 import '../controllers/signup_controller.dart';
@@ -20,5 +21,6 @@ class AuthBinding extends Bindings {
     Get.lazyPut<VerifyOtpController>(() => VerifyOtpController());
     Get.lazyPut<HomeController>(() => HomeController());
     Get.lazyPut<MapController>(() => MapController());
+    Get.lazyPut<ChatScreenController>(() => ChatScreenController());
   }
 }

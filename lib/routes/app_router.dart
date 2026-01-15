@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:sign_in_google_with_agora/modules/views/bottom_navigation_screens/chat_screen/chat_detail_screen.dart';
 import 'package:sign_in_google_with_agora/modules/views/google_map.dart';
 import 'package:sign_in_google_with_agora/modules/views/home_screen.dart';
 import '../services/notification_service.dart';
@@ -63,6 +64,16 @@ class AppRouter {
         builder: (context, state) {
           AuthBinding().dependencies();
           return HomeScreen();
+        },
+      ),
+      GoRoute(
+        path: '/chatDetailScreen',
+        builder: (context, state) {
+          AuthBinding().dependencies();
+          final extra = state.extra as Map<String, dynamic>?;
+          final receiverId = extra?['receiverId'] as String? ?? '';
+          final receiverName = extra?['receiverName'] as String? ?? '';
+          return ChatDetailScreen(receiverId: receiverId, receiverName: receiverName);
         },
       ),
       GoRoute(

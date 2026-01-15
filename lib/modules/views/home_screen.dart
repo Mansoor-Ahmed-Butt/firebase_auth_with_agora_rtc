@@ -5,6 +5,7 @@ import 'package:sign_in_google_with_agora/auth/firebase_auth/firebase_auth.dart'
 import 'package:sign_in_google_with_agora/modules/controllers/home_controller.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:flutter/services.dart';
+import 'package:sign_in_google_with_agora/modules/views/bottom_navigation_screens/chat_screen/chat_screen.dart';
 import 'package:sign_in_google_with_agora/modules/views/google_map.dart';
 import 'package:sign_in_google_with_agora/modules/widgets/app_bottom_navigation.dart';
 
@@ -23,7 +24,7 @@ class HomeScreen extends GetView<HomeController> {
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Colors.blueGrey;
 
-  static const List<Color> containerColors = [Colors.greenAccent, Colors.grey, Colors.lightBlueAccent, Colors.tealAccent];
+  static const List<Color> containerColors = [Colors.greenAccent, Colors.white, Colors.lightBlueAccent, Colors.tealAccent];
   final Color? containerColor = containerColors[0];
 
   @override
@@ -68,7 +69,7 @@ class HomeScreen extends GetView<HomeController> {
         Widget content;
         switch (index) {
           case 0:
-            content = Center(child: Text('Notification Screen', style: const TextStyle(fontSize: 20)));
+            content = ChatScreenView();
             break;
           case 1:
             content = Center(child: Text('Calender Screen', style: const TextStyle(fontSize: 20)));
