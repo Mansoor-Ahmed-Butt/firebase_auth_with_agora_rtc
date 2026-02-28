@@ -1,27 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sign_in_google_with_agora/services/chat_services.dart';
+import 'package:get/get.dart';
+import 'chat_screen_controller.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+class ChatDetailScreen extends GetView<ChatScreenController> {
   final String receiverId;
   final String receiverName;
 
   const ChatDetailScreen({super.key, required this.receiverId, required this.receiverName});
-
-  @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
-}
-
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
-  final ChatServices _chatServices = ChatServices();
-  final TextEditingController _messageController = TextEditingController();
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +19,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.receiverName)),
+      appBar: AppBar(title: Text(receiverName)),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _chatServices.getMessages(currentUser.uid, widget.receiverId),
+              stream: controller.getMessages(receiverId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -81,17 +68,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      textInputAction: TextInputAction.send,
-                      minLines: 1,
-                      maxLines: 4,
-                      decoration: const InputDecoration(hintText: 'Type a message', border: OutlineInputBorder()),
-                      onSubmitted: (_) => _sendMessage(),
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: TextField(
+                        controller: controller.messageController,
+                        textInputAction: TextInputAction.send,
+                        minLines: 1,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                          hintText: 'Type a message',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+                        ),
+                        onSubmitted: (_) => controller.sendMessage(receiverId),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton(icon: const Icon(Icons.send), onPressed: _sendMessage),
+                  IconButton(icon: const Icon(Icons.send), onPressed: () => controller.sendMessage(receiverId)),
+               
                 ],
               ),
             ),
@@ -99,17 +93,5 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _sendMessage() async {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
-
-    try {
-      await _chatServices.sendMessage(widget.receiverId, text);
-      _messageController.clear();
-    } catch (e) {
-      // You can show a snackbar or dialog here if you want
-    }
   }
 }

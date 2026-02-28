@@ -11,16 +11,6 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Initialize notifications (local + FCM handlers)
   await NotificationsService.initialize();
-
-  // For debugging: print FCM token
-  try {
-    final token = await NotificationsService.getToken();
-    if (token != null) {
-      // ignore: avoid_print
-      print('NFCM token: $token');
-    }
-  } catch (_) {}
-
   runApp(const MyApp());
 }
 

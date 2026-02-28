@@ -53,12 +53,13 @@ class ChatScreenView extends GetView<ChatScreenController> {
                   item: user,
                   child: ListTile(
                     contentPadding: EdgeInsets.zero,
+
                     leading: const CircleAvatar(
                       backgroundColor: Colors.grey,
                       child: Icon(Icons.person, color: Colors.white),
                     ),
                     title: Text(title),
-                    subtitle: Text(email),
+                    // subtitle: Text(email),
                   ),
                 );
               }).toList();

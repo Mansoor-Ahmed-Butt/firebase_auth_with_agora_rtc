@@ -24,7 +24,7 @@ class HomeScreen extends GetView<HomeController> {
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Colors.blueGrey;
 
-  static const List<Color> containerColors = [Colors.greenAccent, Colors.white, Colors.lightBlueAccent, Colors.tealAccent];
+  static const List<Color> containerColors = [Colors.white, Colors.white, Colors.lightBlueAccent, Colors.tealAccent];
   final Color? containerColor = containerColors[0];
 
   @override
@@ -43,19 +43,30 @@ class HomeScreen extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Home Screen'),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                try {
-                  await AuthService.instance.signOutWithGoogle();
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Colors.black),
+              onSelected: (value) async {
+                if (value == 'logout') {
+                  try {
+                    await AuthService.instance.signOutWithGoogle();
 
-                  if (!context.mounted) return;
-                  context.go('/login');
-                } catch (e) {
-                  // ignore: avoid_print
-                  print('Logout error: $e');
+                    if (!context.mounted) return;
+                    context.go('/login');
+                  } catch (e) {
+                    // ignore: avoid_print
+                    print('Logout error: $e');
+                  }
+                } else if (value == 'profile') {
+                  // context.go('/profile');
+                } else if (value == 'settings') {
+                  // context.go('/settings');
                 }
               },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(value: 'profile', child: Text('Profile')),
+                const PopupMenuItem<String>(value: 'settings', child: Text('Setting')),
+                const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
+              ],
             ),
           ],
         ),

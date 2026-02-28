@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -21,9 +23,32 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> _initFlutterLocalNotifications() async {
-  const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+  final AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const InitializationSettings initializationSettings = InitializationSettings(android: androidInitializationSettings);
+  // Provide platform-specific initialization settings so `initialize()`
+  // doesn't throw when running on desktop platforms (Windows/Linux/macOS).
+  late final InitializationSettings initializationSettings;
+
+  if (!kIsWeb && Platform.isAndroid) {
+    initializationSettings = InitializationSettings(android: androidInitializationSettings);
+  } else if (!kIsWeb && Platform.isIOS) {
+    initializationSettings = const InitializationSettings(iOS: DarwinInitializationSettings());
+  } else if (!kIsWeb && Platform.isMacOS) {
+    initializationSettings = const InitializationSettings(macOS: DarwinInitializationSettings());
+  } else if (!kIsWeb && Platform.isLinux) {
+    initializationSettings = InitializationSettings(linux: LinuxInitializationSettings(defaultActionName: 'Open'));
+  } else if (!kIsWeb && Platform.isWindows) {
+    // Provide required Windows initialization parameters.
+    initializationSettings = InitializationSettings(
+      windows: WindowsInitializationSettings(
+        appName: 'AgoraChat',
+        appUserModelId: 'com.example.firebase_auth_with_agora_rtc',
+        guid: '01234567-89ab-cdef-0123-456789abcdef',
+      ),
+    );
+  } else {
+    initializationSettings = InitializationSettings();
+  }
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
@@ -32,6 +57,17 @@ Future<void> _initFlutterLocalNotifications() async {
     await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(
       _channel,
     );
+  }
+}
+
+Future<void> _saveFcmTokenToFirestore(String token) async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && token.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({'fcmToken': token}, SetOptions(merge: true));
+    }
+  } catch (e) {
+    if (kDebugMode) debugPrint('Failed saving token: $e');
   }
 }
 
@@ -49,7 +85,19 @@ Future<void> _showNotificationFromRemoteMessage(RemoteMessage message) async {
     priority: Priority.high,
   );
 
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+  // iOS/macOS foreground presentation options (so alerts/sounds show when app open)
+  final DarwinNotificationDetails darwinDetails = DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true);
+
+  final LinuxNotificationDetails linuxDetails = LinuxNotificationDetails(defaultActionName: 'Open');
+  final WindowsNotificationDetails windowsDetails = WindowsNotificationDetails();
+
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+    iOS: darwinDetails,
+    macOS: darwinDetails,
+    linux: linuxDetails,
+    windows: windowsDetails,
+  );
 
   await flutterLocalNotificationsPlugin.show(
     id,
@@ -70,6 +118,22 @@ class NotificationsService {
     // Request permissions for iOS
     await FirebaseMessaging.instance.requestPermission(alert: true, badge: true, sound: true);
 
+    // Save current token to Firestore (so Cloud Function can send notifications)
+    try {
+      final String? token = await FirebaseMessaging.instance.getToken();
+
+      if (token != null) {
+        print('FCM token: $token');
+        await _saveFcmTokenToFirestore(token);
+      }
+
+      // keep token up-to-date
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+        await _saveFcmTokenToFirestore(newToken);
+      });
+    } catch (e) {
+      if (kDebugMode) debugPrint('FCM token error: $e');
+    }
     // Set background handler (must be a top-level function)
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
